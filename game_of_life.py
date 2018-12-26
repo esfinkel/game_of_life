@@ -3,36 +3,6 @@ import copy
 from time import sleep
 import tkinter as tk
 
-"""
-def printgame(game):
-    #print(''.join([str(i) for i in list(range(len(game)))]))
-    print(len(game)*'X ')
-    for row in game:
-        r = ''
-        for char in row:
-            r += char*'O'+(1-char)*'-' + ' '
-        print(r)
-    print(len(game)*'X ')
-    #print(''.join([str(i) for i in list(range(len(game)))]))
-
-def iterate(game):
-    reader = copy.deepcopy(game)
-    m = len(reader)
-    n = len(reader[0])
-    for row in range(m):
-        for col in range(n):
-            neighbors = findnbs(row,col,reader)
-            alive = reader[row][col]
-            game[row][col] = rule(neighbors,alive)
-    printgame(game)
-
-def iteraten(game,n):
-    for i in range(n):
-        iterate(game)
-        sleep(.1)
-
-"""
-
 def findnbs(row,col,reader):
     total = 0
     positions = [[row-1,col-1],[row,col-1],[row+1,col-1],[row-1,col],[row+1,col],[row-1,col+1],[row,col+1],[row+1,col+1]]
@@ -63,7 +33,6 @@ def make_blank_game(n):
     game = [[0 for i in range(n)] for i in range(n)]
     return game
 
-
 def make_sample_game(n):
     assert n>8
     template = make_blank_game(n)
@@ -81,6 +50,7 @@ class Game:
     def __init__(self):
         self.g = make_sample_game(10)
         self.root = tk.Tk()
+        self.play = True
         self.buttons = [[0 for i in range(len(self.g))] for j in range(len(self.g))]
                 
     def flip(self,r,c):
@@ -104,17 +74,25 @@ class Game:
     def color(i):
         cls = {0: 'red', 1: 'blue'}
         return cls[i]
+    
+    def pp(self):
+        self.play = not self.play
             
     def draw(self):
         game = self.g
+        pp = tk.Button(self.root, command=(lambda self=self: self.pp()), text='p')
         for r in range(len(game)):
             for c in range(len(game[0])):
                 but = tk.Button(self.root, command = (lambda r=r, c=c: self.flip(r,c)))
+                #but.bind('<Enter>', (lambda r=r, c=c: self.flip(r,c)))
                 Game.set(but,{'text':Game.text(game[r][c]), 'highlightbackground':Game.color(game[r][c])})
                 self.buttons[r][c] = but
                 but.grid(row=r,column=c)
-    
+        pp.grid(row=0,column=len(game))
+
     def iterate(self):
+        if not self.play:
+            return
         game = self.g
         reader = copy.deepcopy(game)
         m = len(reader)
@@ -129,7 +107,7 @@ class Game:
     
     def update(self):
         self.iterate()
-        self.root.after(1000, self.update) # run this function again in 1,000 milliseconds
+        self.root.after(400, self.update) # run this function again in 400 milliseconds
         
 def run_sample():
     g1 = make_sample_game(10)
