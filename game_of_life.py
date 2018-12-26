@@ -4,6 +4,7 @@ from time import sleep
 import tkinter as tk
 
 def findnbs(row,col,reader):
+    '''given cell, return number of neighbors'''
     total = 0
     positions = [[row-1,col-1],[row,col-1],[row+1,col-1],[row-1,col],[row+1,col],[row-1,col+1],[row,col+1],[row+1,col+1]]
     def fix(i):
@@ -21,6 +22,7 @@ def findnbs(row,col,reader):
     return total
 
 def rule(neighbors,alive):
+    '''return value of: cell should be alive'''
     if neighbors < 2:
         return 0
     if neighbors > 3:
@@ -34,6 +36,19 @@ def make_blank_game(n):
     return game
 
 def make_sample_game(n):
+    '''
+    Makes game:
+    ----------
+    ----------
+    ----------
+    ----------
+    -----O-O--
+    ----OOOO--
+    ----------
+    ----------
+    ----------
+    ----------
+    '''
     assert n>8
     template = make_blank_game(n)
     template[5][5] = 1
@@ -54,6 +69,7 @@ class Game:
         self.buttons = [[0 for i in range(len(self.g))] for j in range(len(self.g))]
                 
     def flip(self,r,c):
+        '''flip a cell'''
         if self.g[r][c]==0:
             self.g[r][c]=1
         else:
@@ -61,6 +77,7 @@ class Game:
         Game.set(self.buttons[r][c],{'text':Game.text(self.g[r][c]), 'highlightbackground':Game.color(self.g[r][c])})
         
     def set(button,fields):
+        '''set button properties'''
         # fields could be {'text': 'ee', 'highlightbackground': 'red'}
         if 'text' in fields:
             button.configure(text = fields['text']);
@@ -69,16 +86,20 @@ class Game:
         return
     
     def text(s):
+        '''return button text as a function of cell life'''
         return ''
-    
+
     def color(i):
+        '''# return button color as a function of cell life'''
         cls = {0: 'red', 1: 'blue'}
         return cls[i]
     
     def pp(self):
+        '''pause or play'''
         self.play = not self.play
             
     def draw(self):
+        '''create buttons'''
         game = self.g
         pp = tk.Button(self.root, command=(lambda self=self: self.pp()), text='p')
         for r in range(len(game)):
@@ -88,9 +109,11 @@ class Game:
                 Game.set(but,{'text':Game.text(game[r][c]), 'highlightbackground':Game.color(game[r][c])})
                 self.buttons[r][c] = but
                 but.grid(row=r,column=c)
+        pp.configure(text = 'p')
         pp.grid(row=0,column=len(game))
 
     def iterate(self):
+        '''if in play, apply rules to every button, and then flip accordingly'''
         if not self.play:
             return
         game = self.g
