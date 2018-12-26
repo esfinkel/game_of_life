@@ -1,4 +1,4 @@
-# Game-of-Life
+# Game of Life
 Based on the titular mathematical Gedankenexperiment by John Horton Conway.
 From the wikipedia page (https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life):
 
