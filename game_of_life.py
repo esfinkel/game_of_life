@@ -61,13 +61,13 @@ def make_sample_game(n):
     return template
 
 class Game:
-    
+
     def __init__(self):
         self.g = make_sample_game(10)
         self.root = tk.Tk()
         self.play = True
         self.buttons = [[0 for i in range(len(self.g))] for j in range(len(self.g))]
-                
+
     def flip(self,r,c):
         '''flip a cell'''
         if self.g[r][c]==0:
@@ -75,7 +75,7 @@ class Game:
         else:
             self.g[r][c]=0
         Game.set(self.buttons[r][c],{'text':Game.text(self.g[r][c]), 'highlightbackground':Game.color(self.g[r][c])})
-        
+
     def set(button,fields):
         '''set button properties'''
         # fields could be {'text': 'ee', 'highlightbackground': 'red'}
@@ -84,7 +84,7 @@ class Game:
         if 'highlightbackground' in fields:
             button.configure(highlightbackground = fields['highlightbackground']);
         return
-    
+
     def text(s):
         '''return button text as a function of cell life'''
         return ''
@@ -93,45 +93,49 @@ class Game:
         '''# return button color as a function of cell life'''
         cls = {0: 'red', 1: 'blue'}
         return cls[i]
-    
+
     def pp(self):
         '''pause or play'''
         self.play = not self.play
-            
+
     def draw(self):
         '''create buttons'''
         game = self.g
-        pp = tk.Button(self.root, command=(lambda self=self: self.pp()), text='p')
+        butsize = 3
+        p_button = tk.Button(self.root, command=(lambda self=self: self.pp()), text='p', height=butsize, width=butsize)
         for r in range(len(game)):
             for c in range(len(game[0])):
-                but = tk.Button(self.root, command = (lambda r=r, c=c: self.flip(r,c)))
+                but = tk.Button(self.root, command = (lambda r=r, c=c: self.flip(r,c)), height=butsize, width=butsize)
                 #but.bind('<Enter>', (lambda r=r, c=c: self.flip(r,c)))
                 Game.set(but,{'text':Game.text(game[r][c]), 'highlightbackground':Game.color(game[r][c])})
                 self.buttons[r][c] = but
                 but.grid(row=r,column=c)
-        pp.configure(text = 'p')
-        pp.grid(row=0,column=len(game))
+        #p_button.configure(text = 'p')
+        p_button.grid(row=0,column=len(game))
+        self.p_button = p_button
 
     def iterate(self):
         '''if in play, apply rules to every button, and then flip accordingly'''
-        if not self.play:
-            return
-        game = self.g
-        reader = copy.deepcopy(game)
-        m = len(reader)
-        n = len(reader[0])
-        for row in range(m):
-            for col in range(n):
-                neighbors = findnbs(row,col,reader)
-                alive = reader[row][col]
-                game[row][col] = rule(neighbors,alive)
-                Game.set(self.buttons[row][col],{'text':Game.text(game[row][col]), 'highlightbackground':Game.color(game[row][col])})
-                #self.buttons[row][col].configure(text = game[row][col])
-    
+        if self.play:
+            self.p_button.configure(highlightbackground='white')
+            game = self.g
+            reader = copy.deepcopy(game)
+            m = len(reader)
+            n = len(reader[0])
+            for row in range(m):
+                for col in range(n):
+                    neighbors = findnbs(row,col,reader)
+                    alive = reader[row][col]
+                    game[row][col] = rule(neighbors,alive)
+                    Game.set(self.buttons[row][col],{'text':Game.text(game[row][col]), 'highlightbackground':Game.color(game[row][col])})
+                    #self.buttons[row][col].configure(text = game[row][col])
+        else:
+            self.p_button.configure(highlightbackground='purple')
+
     def update(self):
         self.iterate()
         self.root.after(400, self.update) # run this function again in 400 milliseconds
-        
+
 def run_sample():
     g1 = make_sample_game(10)
     sleep(1)
