@@ -76,19 +76,22 @@ class Game:
             self.g[r][c]=0
         Game.set(self.buttons[r][c],{'text':Game.text(self.g[r][c]), 'highlightbackground':Game.color(self.g[r][c])})
 
-    def set(button,fields):
+    @staticmethod
+    def set(button, fields):
         '''set button properties'''
         # fields could be {'text': 'ee', 'highlightbackground': 'red'}
         if 'text' in fields:
-            button.configure(text = fields['text']);
+            button.configure(text = fields['text'])
         if 'highlightbackground' in fields:
-            button.configure(highlightbackground = fields['highlightbackground']);
+            button.configure(highlightbackground = fields['highlightbackground'])
         return
 
+    @staticmethod
     def text(s):
         '''return button text as a function of cell life'''
         return ''
 
+    @staticmethod
     def color(i):
         '''# return button color as a function of cell life'''
         cls = {0: 'red', 1: 'blue'}
@@ -139,17 +142,17 @@ class Game:
 def run_sample():
     g1 = make_sample_game(10)
     sleep(1)
-    iterate(g1)
+    g1.iterate()
     sleep(1)
-    iterate(g1)
+    g1.iterate()
     sleep(1)
-    iterate(g1)
+    g1.iterate()
     sleep(1)
-    iterate(g1)
+    g1.iterate()
     sleep(1)
-    iterate(g1)
+    g1.iterate()
     sleep(1)
-    iterate(g1)
+    g1.iterate()
     sleep(1)
 
 if __name__ == '__main__':
