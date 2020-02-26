@@ -3,6 +3,9 @@ import copy
 from time import sleep
 import tkinter as tk
 
+# unfortunately (some?) Macs do not support button background-coloring
+# https://stackoverflow.com/questions/1529847/how-to-change-the-foreground-or-background-colour-of-a-tkinter-button-on-mac-os 
+
 def findnbs(row,col,reader):
     '''given cell, return number of neighbors'''
     total = 0
@@ -83,13 +86,14 @@ class Game:
         if 'text' in fields:
             button.configure(text = fields['text'])
         if 'highlightbackground' in fields:
-            button.configure(highlightbackground = fields['highlightbackground'])
+            button.configure(highlightbackground = fields['highlightbackground'], bg=fields['highlightbackground'])
+            button.configure(fg = fields['highlightbackground'])
         return
 
     @staticmethod
     def text(s):
         '''return button text as a function of cell life'''
-        return ''
+        return '###\n###\n###'
 
     @staticmethod
     def color(i):
@@ -105,7 +109,7 @@ class Game:
         '''create buttons'''
         game = self.g
         butsize = 3
-        p_button = tk.Button(self.root, command=(lambda self=self: self.pp()), text='p', height=butsize, width=butsize)
+        p_button = tk.Button(self.root, command=(lambda self=self: self.pp()), text='pause', height=butsize, width=butsize*2)
         for r in range(len(game)):
             for c in range(len(game[0])):
                 but = tk.Button(self.root, command = (lambda r=r, c=c: self.flip(r,c)), height=butsize, width=butsize)
@@ -120,7 +124,7 @@ class Game:
     def iterate(self):
         '''if in play, apply rules to every button, and then flip accordingly'''
         if self.play:
-            self.p_button.configure(highlightbackground='white')
+            self.p_button.configure(highlightbackground='white', background='white', fg='black')
             game = self.g
             reader = copy.deepcopy(game)
             m = len(reader)
@@ -133,7 +137,7 @@ class Game:
                     Game.set(self.buttons[row][col],{'text':Game.text(game[row][col]), 'highlightbackground':Game.color(game[row][col])})
                     #self.buttons[row][col].configure(text = game[row][col])
         else:
-            self.p_button.configure(highlightbackground='purple')
+            self.p_button.configure(highlightbackground='purple', background='purple', fg='DarkRed')
 
     def update(self):
         self.iterate()
